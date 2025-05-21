@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>会議タイムキーパー</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="tab-buttons">
+            <button class="tab-button active" data-tab="agenda">アジェンダ作成</button>
+            <button class="tab-button" data-tab="timer">タイムキーパー</button>
+        </div>
+
+        <div id="agenda-tab" class="tab-content active">
+            <div class="input-section">
+                <form id="topic-input-form">
+                    <input type="text" id="topic-text" placeholder="話すこと（例：今日の目標）" required>
+                    <input type="number" id="topic-duration" placeholder="時間（分）" min="1" required>
+                    <textarea id="topic-memo" placeholder="メモ（任意）：
+- 議題の詳細
+- 参加者の役割
+- 議論のポイント"></textarea>
+                    <button type="submit">追加</button>
+                </form>
+                <p class="total-duration">合計議論時間: <span id="total-duration-display">0分</span></p>
+            </div>
+            <h2>議論テーマ一覧（ドラッグで並び替え可能）</h2>
+            <ul id="agenda-list" class="sortable-list">
+                </ul>
+        </div>
+
+        <div id="timer-tab" class="tab-content">
+            <div class="timer-main-area">
+                <div class="current-topic-display">
+                    <h3>現在議論中のテーマ:</h3>
+                    <p id="current-topic-name">なし</p>
+                    <div id="current-topic-memo" class="topic-memo-display"></div>
+                </div>
+
+                <div id="timer-display-wrapper">
+                    <div id="timer-display">00:00</div>
+                    <div class="timer-controls">
+                        <button id="start-pause-button">開始</button>
+                        <button id="reset-button">リセット</button>
+                        <button id="next-topic-button">次の議論に進む</button>
+                    </div>
+                    <div class="extension-controls">
+                        <input type="number" id="extension-minutes" value="1" min="1" placeholder="延長分">
+                        <button id="extend-timer-button">延長</button>
+                    </div>
+                </div>
+
+                <div class="next-topic-display">
+                    <h3>この後話すテーマ:</h3>
+                    <p id="next-topic-name">なし</p>
+                    <div id="next-topic-memo" class="topic-memo-display"></div>
+                </div>
+            </div>
+
+            <div class="topic-progress-sidebar">
+                <button id="toggle-sidebar-timer" class="toggle-sidebar-button">テーマ一覧 <span id="toggle-icon-timer">◀</span></button>
+                <div id="progress-list-container">
+                    <h2>進行状況</h2>
+                    <ul id="progress-list">
+                        </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
