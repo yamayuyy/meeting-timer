@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- データ管理（ローカルストレージ） ---
     function loadTopics() {
-        const storedTopics = localStorage.getItem('meetingTopicsV7'); // バージョンアップでキー変更
+        const storedTopics = localStorage.getItem('meetingTopicsV8'); // バージョンアップでキー変更
         if (storedTopics) {
             topics = JSON.parse(storedTopics);
             // 既存データにmemoがない場合のためにデフォルト値を設定 (初回ロード時のみ)
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function saveTopics() {
-        localStorage.setItem('meetingTopicsV7', JSON.stringify(topics));
+        localStorage.setItem('meetingTopicsV8', JSON.stringify(topics));
     }
 
     // --- タブ切り替え ---
@@ -263,10 +263,25 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateTimerDisplay() {
         timerDisplay.textContent = formatTime(remainingTime);
 
+        // タイマーの色を更新
+        timerDisplay.classList.remove('warning', 'critical', 'overtime');
+        if (remainingTime > 0) {
+            if (remainingTime <= 60) { // 残り1分以下
+                timerDisplay.classList.add('warning');
+            }
+            if (remainingTime <= 30) { // 残り30秒以下
+                timerDisplay.classList.remove('warning'); // warningを削除してcriticalを優先
+                timerDisplay.classList.add('critical');
+            }
+        } else { // 時間が0以下（オーバータイム）
+            timerDisplay.classList.add('overtime');
+        }
+
+
         // 現在のテーマ情報表示
         if (currentTopicIndex !== -1 && topics[currentTopicIndex]) {
             const currentTopic = topics[currentTopicIndex];
-            currentTopicNameDisplay.textContent = `${currentTopic.text} (${formatTime(remainingTime)})`;
+            currentTopicNameDisplay.textContent = `${currentTopic.text} (${formatTime(remainingTime)} / ${currentTopic.duration}分)`;
             // メモの内容を <p> タグでラップして表示
             currentTopicMemoDisplay.innerHTML = currentTopic.memo ? currentTopic.memo.split('\n').filter(line => line.trim() !== '').map(line => `<p>${line}</p>`).join('') : 'メモはありません。';
         } else {
@@ -365,6 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
         startPauseButton.textContent = '開始';
         startPauseButton.classList.remove('pause');
         renderProgressList(); // ハイライト解除など
+        updateTimerDisplay(); // ポーズ時も色更新が必要な場合のため
     }
 
     function resetTimer() {
